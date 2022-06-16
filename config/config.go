@@ -15,15 +15,15 @@ func init() {
 	flag.StringVar(&config, "c", "", "choose config file.")
 	flag.Parse()
 	if config == "" { // 优先级: 命令行 > 环境变量 > 默认值
-		if configEnv := os.Getenv("TiTan_CONFIG"); configEnv == "" {
+		if configEnv := os.Getenv("ATCONFIG"); configEnv == "" {
 			config = "config.yaml"
-			log.Printf("您正在使用config的默认值\n")
+			log.Printf("正在使用config的默认值\n")
 		} else {
 			config = configEnv
-			log.Printf("您正在使用GVA_CONFIG环境变量,config的路径为%v\n", config)
+			log.Printf("正在使用ATCONFIG环境变量,config的路径为%v\n", config)
 		}
 	} else {
-		log.Printf("您正在使用命令行的-c参数传递的值,config的路径为%v\n", config)
+		log.Printf("正在使用命令行的-c参数传递的值,config的路径为%v\n", config)
 	}
 
 	v := viper.New()
