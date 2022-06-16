@@ -365,9 +365,9 @@ func (j *janitor) Run(c *timedcache) {
 	}
 }
 
-func stopJanitor(c *TimedCache) {
-	c.janitor.stop <- true
-}
+// func stopJanitor(c *TimedCache) {
+// 	c.janitor.stop <- true
+// }
 
 func runJanitor(c *timedcache, ci time.Duration) {
 	j := &janitor{
