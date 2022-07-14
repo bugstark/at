@@ -7,8 +7,8 @@ import (
 )
 
 func NewEngine(debug bool) *gin.Engine {
-	if debug {
-		gin.SetMode(gin.DebugMode)
+	if !debug {
+		gin.SetMode(gin.ReleaseMode)
 	}
 	var app = gin.New()
 	app.MaxMultipartMemory = 8 << 20

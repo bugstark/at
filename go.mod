@@ -5,6 +5,7 @@ go 1.18
 require github.com/xuri/excelize/v2 v2.6.0
 
 require (
+	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -39,6 +40,8 @@ require (
 )
 
 require (
+	github.com/casbin/casbin/v2 v2.51.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
