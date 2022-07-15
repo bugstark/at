@@ -11,6 +11,7 @@ import (
 	"github.com/imroc/req"
 )
 
+// 中国移动MAS短信平台
 type MAS struct {
 	EcName    string
 	Apid      string

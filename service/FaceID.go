@@ -1,5 +1,7 @@
 package service
 
+// 腾讯云人核身
+
 import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"

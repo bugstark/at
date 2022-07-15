@@ -13,6 +13,7 @@ type Qiniu struct {
 	Bucket    string
 }
 
+// 七牛云上传
 var UPLOAD *Qiniu
 
 func InitQiNiu(ak, sk, bucket string) {

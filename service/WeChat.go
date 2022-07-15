@@ -1,6 +1,9 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/imroc/req"
 	"github.com/silenceper/wechat/cache"
 	platform "github.com/silenceper/wechat/v2"
@@ -31,10 +34,17 @@ func InitMiniProgram(appid, appsecret, akurl string) {
 type CustomTokenHandle struct {
 	Appid string
 	Akurl string
+	Cache *cache.Memory
 }
 
+// 自定义获取access_token的方法
 func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
-	res, err := req.Get(c.Akurl)
+	key := fmt.Sprintf("custom_%s_access_token", c.Appid)
+	token := c.Cache.Get(key)
+	if token != nil {
+		return token.(string), nil
+	}
+	r, err := req.Get(c.Akurl)
 	if err != nil {
 		return "", err
 	}
@@ -42,10 +52,14 @@ func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
 		AccessToken string `json:"access_token"`
 		ExpiresIn   int    `json:"expires_in"`
 	}
-	token := new(ApiRes)
-	err = res.ToJSON(token)
+	var res ApiRes
+	err = r.ToJSON(&res)
 	if err != nil {
 		return "", err
 	}
-	return token.AccessToken, nil
+	err = c.Cache.Set(key, res.AccessToken, time.Second*time.Duration(res.ExpiresIn))
+	if err != nil {
+		return "", err
+	}
+	return res.AccessToken, nil
 }

@@ -9,6 +9,7 @@ import (
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111"
 )
 
+//腾讯云服务
 type Tencent struct {
 	Appid  string
 	Secret string
