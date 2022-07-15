@@ -34,9 +34,9 @@ func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminip
 		Cache:     cache,
 	}
 	if isminiprogram {
-		Wechat.InitMiniProgram()
+		Wechat.initMiniProgram()
 	} else {
-		Wechat.InitOfficialAccount()
+		Wechat.initOfficialAccount()
 	}
 	_, err := Wechat.GetAccessToken()
 	if err != nil {
@@ -45,14 +45,14 @@ func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminip
 	return true
 }
 
-func (w *WeChatModel) InitOfficialAccount() {
+func (w *WeChatModel) initOfficialAccount() {
 	w.OFFICILACCOUNT = platform.NewWechat().GetOfficialAccount(&oaconfig.Config{AppID: w.AppID, AppSecret: w.AppSecret, Cache: w.Cache})
 	if w.UseUNI {
 		w.OFFICILACCOUNT.SetAccessTokenHandle(w)
 	}
 }
 
-func (w *WeChatModel) InitMiniProgram() {
+func (w *WeChatModel) initMiniProgram() {
 	w.MINIPROGRAM = platform.NewWechat().GetMiniProgram(&miniconfig.Config{AppID: w.AppID, AppSecret: w.AppSecret, Cache: w.Cache})
 	if w.UseUNI {
 		w.MINIPROGRAM.SetAccessTokenHandle(w)
@@ -96,7 +96,7 @@ func (w *WeChatModel) GetAccessToken() (accessToken string, err error) {
 }
 
 func (w *WeChatModel) GetMPUserAccessToken(code string) (access_token, openid string, err error) {
-	component_access_token, err := w.GetComponent_access_token()
+	component_access_token, err := w.get_component_access_token()
 	if err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (w *WeChatModel) GetMPUserAccessToken(code string) (access_token, openid st
 }
 
 // 获取开放平台的component_access_token用户换取用户的授权access_token
-func (w *WeChatModel) GetComponent_access_token() (component_access_token string, err error) {
+func (w *WeChatModel) get_component_access_token() (component_access_token string, err error) {
 	token := w.Cache.Get("component_access_token")
 	if token != nil {
 		log.Println("get component_access_token from cache")
