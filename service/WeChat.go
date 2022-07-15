@@ -95,16 +95,63 @@ func (w *WeChatModel) GetAccessToken() (accessToken string, err error) {
 	return res.Data.AccessToken, nil
 }
 
-func (w *WeChatModel) GetMPUserAccessToken(code string) {
-	ak, err := w.OFFICILACCOUNT.GetAccessToken()
+func (w *WeChatModel) GetMPUserAccessToken(code string) (access_token, openid string, err error) {
+	component_access_token, err := w.GetComponent_access_token()
 	if err != nil {
-		panic(err)
+		return
 	}
-	url := fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=wxbd5c9e30b31c7cc4&component_access_token=%s", w.AppID, code, ak)
-	log.Println(url)
-	res, err := req.Get(url)
+	url := fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=wxbd5c9e30b31c7cc4&component_access_token=%s", w.AppID, code, component_access_token)
+	r, err := req.Get(url)
 	if err != nil {
-		panic(err)
+		return
 	}
-	log.Println(res.String())
+	type ApiRes struct {
+		AccessToken string `json:"access_token"`
+		Openid      string `json:"openid"`
+		Errmsg      string `json:"errmsg"`
+	}
+	var res ApiRes
+	err = r.ToJSON(&res)
+	if err != nil {
+		return
+	}
+	if res.Errmsg != "" {
+		return "", "", errors.New(res.Errmsg)
+	}
+	return res.AccessToken, res.Openid, nil
+}
+
+// 获取开放平台的component_access_token用户换取用户的授权access_token
+func (w *WeChatModel) GetComponent_access_token() (component_access_token string, err error) {
+	token := w.Cache.Get("component_access_token")
+	if token != nil {
+		log.Println("get component_access_token from cache")
+		return token.(string), nil
+	}
+	r, err := req.Get("https://uni.an2.cn/open/component_access_token")
+	if err != nil {
+		return
+	}
+	type ApiRes struct {
+		Msg  string `json:"msg"`
+		Data struct {
+			ComponentAccessToken string `json:"component_access_token"`
+			ExpiresAt            int    `json:"expires_at"`
+			ExpiresIn            int    `json:"expires_in"`
+		} `json:"data"`
+	}
+	var res ApiRes
+	err = r.ToJSON(&res)
+	if err != nil {
+		return "", err
+	}
+	if res.Msg != "" {
+		return "", errors.New(res.Msg)
+	}
+	err = w.Cache.Set("component_access_token", res.Data.ComponentAccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
+	if err != nil {
+		return "", err
+	}
+	log.Println("get component_access_token from Uni")
+	return res.Data.ComponentAccessToken, nil
 }
