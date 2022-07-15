@@ -15,38 +15,59 @@ import (
 	oaconfig "github.com/silenceper/wechat/v2/officialaccount/config"
 )
 
-var OFFICILACCOUNT *officialaccount.OfficialAccount //公众号
-var MINIPROGRAM *miniprogram.MiniProgram            //小程序
+type WeChatModel struct {
+	OFFICILACCOUNT *officialaccount.OfficialAccount
+	MINIPROGRAM    *miniprogram.MiniProgram
+	AppID          string
+	AppSecret      string
+	UseUNI         bool
+	Cache          cache.Cache
+}
 
-func InitOfficialAccount(appid, appsecret, akurl string, cache cache.Cache) {
-	OFFICILACCOUNT = platform.NewWechat().GetOfficialAccount(&oaconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache})
-	if akurl != "" {
-		OFFICILACCOUNT.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl, Cache: cache})
+var Wechat *WeChatModel
+
+func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminiprogram bool) bool {
+	Wechat = &WeChatModel{
+		AppID:     appid,
+		AppSecret: appsceret,
+		UseUNI:    useuni,
+		Cache:     cache,
+	}
+	if isminiprogram {
+		Wechat.InitMiniProgram()
+	} else {
+		Wechat.InitOfficialAccount()
+	}
+	_, err := Wechat.GetAccessToken()
+	if err != nil {
+		panic(err)
+	}
+	return true
+}
+
+func (w *WeChatModel) InitOfficialAccount() {
+	w.OFFICILACCOUNT = platform.NewWechat().GetOfficialAccount(&oaconfig.Config{AppID: w.AppID, AppSecret: w.AppSecret, Cache: w.Cache})
+	if w.UseUNI {
+		w.OFFICILACCOUNT.SetAccessTokenHandle(w)
 	}
 }
 
-func InitMiniProgram(appid, appsecret, akurl string, cache cache.Cache) {
-	MINIPROGRAM = platform.NewWechat().GetMiniProgram(&miniconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache})
-	if akurl != "" {
-		MINIPROGRAM.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl, Cache: cache})
+func (w *WeChatModel) InitMiniProgram() {
+	w.MINIPROGRAM = platform.NewWechat().GetMiniProgram(&miniconfig.Config{AppID: w.AppID, AppSecret: w.AppSecret, Cache: w.Cache})
+	if w.UseUNI {
+		w.MINIPROGRAM.SetAccessTokenHandle(w)
 	}
-}
-
-type CustomTokenHandle struct {
-	Appid string
-	Akurl string
-	Cache cache.Cache
 }
 
 // 自定义获取access_token的方法
-func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
-	key := fmt.Sprintf("custom_%s_access_token", c.Appid)
-	token := c.Cache.Get(key)
+func (w *WeChatModel) GetAccessToken() (accessToken string, err error) {
+	key := fmt.Sprintf("custom_%s_access_token", w.AppID)
+	token := w.Cache.Get(key)
 	if token != nil {
 		log.Println("get access_token from cache")
 		return token.(string), nil
 	}
-	r, err := req.Get(c.Akurl)
+	r, err := req.Get("https://uni.an2.cn/open/token?appid=" + w.AppID)
 	if err != nil {
 		return "", err
 	}
@@ -66,10 +87,24 @@ func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
 	if res.Msg != "" {
 		return "", errors.New(res.Msg)
 	}
-	err = c.Cache.Set(key, res.Data.AccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
+	err = w.Cache.Set(key, res.Data.AccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
 	if err != nil {
 		return "", err
 	}
-	log.Println("get access_token from " + c.Akurl)
+	log.Println("get access_token from Uni")
 	return res.Data.AccessToken, nil
+}
+
+func (w *WeChatModel) GetMPUserAccessToken(code string) {
+	ak, err := w.OFFICILACCOUNT.GetAccessToken()
+	if err != nil {
+		panic(err)
+	}
+	url := fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s;code=%s;grant_type=authorization_code;component_appid=wxbd5c9e30b31c7cc4;component_access_token=%s", w.AppID, code, ak)
+	log.Println(url)
+	res, err := req.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(res.String())
 }
