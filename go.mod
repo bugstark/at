@@ -55,6 +55,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/imroc/req v0.3.2
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/pbnjay/grate v0.0.0-20220225060228-e2d22a3b931a
 	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
