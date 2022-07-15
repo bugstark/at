@@ -32,6 +32,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.3.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
@@ -46,9 +47,13 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/imroc/req v0.3.2
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/spf13/viper v1.12.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.443
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/faceid v1.0.443
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.443
 	github.com/xuri/efp v0.0.0-20220407160117-ad0f7a785be8 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
