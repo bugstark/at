@@ -59,6 +59,7 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
+	github.com/rs/xid v1.4.0
 	github.com/silenceper/wechat/v2 v2.1.3
 	github.com/spf13/viper v1.12.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.443

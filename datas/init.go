@@ -28,3 +28,10 @@ type Query struct {
 	Size   int    `gorm:"-" form:"size" json:"-"`
 	Page   int    `gorm:"-" form:"page" json:"-"`
 }
+
+type Model struct {
+	ID        string         `gorm:"PRIMARY_KEY;UNIQUE;type:varchar(20);column:id;comment:'唯一ID'" json:"id,omitempty" form:"id"`
+	CreatedAt int64          `gorm:"type:int(10);column:createdat;comment:'创建时间'" json:"createdat,omitempty" form:"createdat"`
+	UpdatedAt int64          `gorm:"type:int(10);column:updatedat;comment:'更新时间'" json:"updatedat,omitempty" form:"updatedat"`
+	DeletedAt gorm.DeletedAt `gorm:"index;comment:'删除时间';column:deletedat" json:"deletedat,omitempty" form:"deletedat"`
+}
