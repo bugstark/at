@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/imroc/req"
-	"github.com/silenceper/wechat/cache"
 	platform "github.com/silenceper/wechat/v2"
+	"github.com/silenceper/wechat/v2/cache"
 	"github.com/silenceper/wechat/v2/miniprogram"
 	miniconfig "github.com/silenceper/wechat/v2/miniprogram/config"
 	"github.com/silenceper/wechat/v2/officialaccount"
@@ -16,25 +16,24 @@ import (
 var OFFICILACCOUNT *officialaccount.OfficialAccount //公众号
 var MINIPROGRAM *miniprogram.MiniProgram            //小程序
 
-func InitOfficialAccount(appid, appsecret, akurl string) {
-	OFFICILACCOUNT = platform.NewWechat().GetOfficialAccount(&oaconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache.NewMemory()})
+func InitOfficialAccount(appid, appsecret, akurl string, cache cache.Cache) {
+	OFFICILACCOUNT = platform.NewWechat().GetOfficialAccount(&oaconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache})
 	if akurl != "" {
-		OFFICILACCOUNT.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl})
+		OFFICILACCOUNT.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl, Cache: cache})
 	}
-
 }
 
-func InitMiniProgram(appid, appsecret, akurl string) {
-	MINIPROGRAM = platform.NewWechat().GetMiniProgram(&miniconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache.NewMemory()})
+func InitMiniProgram(appid, appsecret, akurl string, cache cache.Cache) {
+	MINIPROGRAM = platform.NewWechat().GetMiniProgram(&miniconfig.Config{AppID: appid, AppSecret: appsecret, Cache: cache})
 	if akurl != "" {
-		MINIPROGRAM.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl})
+		MINIPROGRAM.SetAccessTokenHandle(CustomTokenHandle{Appid: appid, Akurl: akurl, Cache: cache})
 	}
 }
 
 type CustomTokenHandle struct {
 	Appid string
 	Akurl string
-	Cache *cache.Memory
+	Cache cache.Cache
 }
 
 // 自定义获取access_token的方法
