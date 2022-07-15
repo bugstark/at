@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -50,18 +51,25 @@ func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
 		return "", err
 	}
 	type ApiRes struct {
-		AccessToken string `json:"access_token"`
-		ExpiresIn   int    `json:"expires_in"`
+		Msg  string `json:"msg"`
+		Data struct {
+			AccessToken string `json:"access_token"`
+			ExpiresAt   int    `json:"expires_at"`
+			ExpiresIn   int    `json:"expires_in"`
+		} `json:"data"`
 	}
 	var res ApiRes
 	err = r.ToJSON(&res)
 	if err != nil {
 		return "", err
 	}
-	err = c.Cache.Set(key, res.AccessToken, time.Second*time.Duration(res.ExpiresIn))
+	if res.Msg != "" {
+		return "", errors.New(res.Msg)
+	}
+	err = c.Cache.Set(key, res.Data.AccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
 	if err != nil {
 		return "", err
 	}
 	log.Println("get access_token from " + c.Akurl)
-	return res.AccessToken, nil
+	return res.Data.AccessToken, nil
 }
