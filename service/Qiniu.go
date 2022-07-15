@@ -15,7 +15,7 @@ type Qiniu struct {
 
 var UPLOAD *Qiniu
 
-func Init(ak, sk, bucket string) {
+func InitQiNiu(ak, sk, bucket string) {
 	UPLOAD = &Qiniu{Accesskey: ak, Secretkey: sk, Bucket: bucket}
 }
 
