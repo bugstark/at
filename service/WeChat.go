@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/imroc/req"
@@ -41,6 +42,7 @@ func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
 	key := fmt.Sprintf("custom_%s_access_token", c.Appid)
 	token := c.Cache.Get(key)
 	if token != nil {
+		log.Println("get access_token from cache")
 		return token.(string), nil
 	}
 	r, err := req.Get(c.Akurl)
@@ -60,5 +62,6 @@ func (c CustomTokenHandle) GetAccessToken() (accessToken string, err error) {
 	if err != nil {
 		return "", err
 	}
+	log.Println("get access_token from " + c.Akurl)
 	return res.AccessToken, nil
 }
