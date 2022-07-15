@@ -100,7 +100,7 @@ func (w *WeChatModel) GetMPUserAccessToken(code string) {
 	if err != nil {
 		panic(err)
 	}
-	url := fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s;code=%s;grant_type=authorization_code;component_appid=wxbd5c9e30b31c7cc4;component_access_token=%s", w.AppID, code, ak)
+	url := fmt.Sprintf("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=wxbd5c9e30b31c7cc4&component_access_token=%s", w.AppID, code, ak)
 	log.Println(url)
 	res, err := req.Get(url)
 	if err != nil {
