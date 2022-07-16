@@ -61,21 +61,22 @@ func (w *WeChatModel) initMiniProgram() {
 
 // 自定义获取access_token的方法
 func (w *WeChatModel) GetAccessToken() (accessToken string, err error) {
-	token := w.Cache.Get("component_access_token")
+	key := fmt.Sprintf("custom_%s_access_token", w.AppID)
+	token := w.Cache.Get(key)
 	if token != nil {
-		log.Println("get component_access_token from cache")
+		log.Println("get access_token from cache")
 		return token.(string), nil
 	}
-	r, err := req.Get("https://uni.an2.cn/open/component_access_token")
+	r, err := req.Get("https://uni.an2.cn/open/token?appid=" + w.AppID)
 	if err != nil {
-		return
+		return "", err
 	}
 	type ApiRes struct {
 		Msg  string `json:"msg"`
 		Data struct {
-			ComponentAccessToken string `json:"component_access_token"`
-			ExpiresAt            int    `json:"expires_at"`
-			ExpiresIn            int    `json:"expires_in"`
+			AccessToken string `json:"access_token"`
+			ExpiresAt   int    `json:"expires_at"`
+			ExpiresIn   int    `json:"expires_in"`
 		} `json:"data"`
 	}
 	var res ApiRes
@@ -86,44 +87,12 @@ func (w *WeChatModel) GetAccessToken() (accessToken string, err error) {
 	if res.Msg != "" {
 		return "", errors.New(res.Msg)
 	}
-	err = w.Cache.Set("component_access_token", res.Data.ComponentAccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
+	err = w.Cache.Set(key, res.Data.AccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
 	if err != nil {
 		return "", err
 	}
-	log.Println("get component_access_token from Uni")
-	return res.Data.ComponentAccessToken, nil
-	// key := fmt.Sprintf("custom_%s_access_token", w.AppID)
-	// token := w.Cache.Get(key)
-	// if token != nil {
-	// 	log.Println("get access_token from cache")
-	// 	return token.(string), nil
-	// }
-	// r, err := req.Get("https://uni.an2.cn/open/token?appid=" + w.AppID)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// type ApiRes struct {
-	// 	Msg  string `json:"msg"`
-	// 	Data struct {
-	// 		AccessToken string `json:"access_token"`
-	// 		ExpiresAt   int    `json:"expires_at"`
-	// 		ExpiresIn   int    `json:"expires_in"`
-	// 	} `json:"data"`
-	// }
-	// var res ApiRes
-	// err = r.ToJSON(&res)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// if res.Msg != "" {
-	// 	return "", errors.New(res.Msg)
-	// }
-	// err = w.Cache.Set(key, res.Data.AccessToken, time.Second*time.Duration(res.Data.ExpiresIn))
-	// if err != nil {
-	// 	return "", err
-	// }
-	// log.Println("get access_token from Uni")
-	// return res.Data.AccessToken, nil
+	log.Println("get access_token from Uni")
+	return res.Data.AccessToken, nil
 }
 
 func (w *WeChatModel) GetMPUserAccessToken(code string) (access_token, openid string, err error) {
