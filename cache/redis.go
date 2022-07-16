@@ -6,6 +6,8 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// TODO redis cache
+
 type Redis struct {
 	rdb *redis.Client
 }

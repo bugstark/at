@@ -2,6 +2,19 @@ package captcha
 
 import "github.com/mojocn/base64Captcha"
 
+// TODO redis 验证码储存
+// type Store interface {
+// 	// Set sets the digits for the captcha id.
+// 	Set(id string, value string) error
+
+// 	// Get returns stored digits for the captcha id. Clear indicates
+// 	// whether the captcha must be deleted from the store.
+// 	Get(id string, clear bool) string
+
+// 	//Verify captcha's answer directly
+// 	Verify(id, answer string, clear bool) bool
+// }
+
 var store = base64Captcha.DefaultMemStore
 var driver base64Captcha.Driver = base64Captcha.NewDriverDigit(80, 240, 4, 0.7, 80)
 
