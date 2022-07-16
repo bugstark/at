@@ -26,7 +26,7 @@ type WeChatModel struct {
 
 var Wechat *WeChatModel
 
-func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminiprogram bool) bool {
+func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminiprogram bool) {
 	Wechat = &WeChatModel{
 		AppID:     appid,
 		AppSecret: appsceret,
@@ -42,7 +42,6 @@ func InitWeChat(appid, appsceret string, useuni bool, cache cache.Cache, isminip
 	if err != nil {
 		panic(err)
 	}
-	return true
 }
 
 func (w *WeChatModel) initOfficialAccount() {

@@ -55,6 +55,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/imroc/req v0.3.2
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/mojocn/base64Captcha v1.3.5
 	github.com/pbnjay/grate v0.0.0-20220225060228-e2d22a3b931a
 	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/richardlehane/mscfb v1.0.4 // indirect
@@ -73,4 +74,10 @@ require (
 	gorm.io/driver/mysql v1.3.4
 	gorm.io/driver/sqlite v1.3.4
 	gorm.io/gorm v1.23.6
+)
+
+require (
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/gomodule/redigo v1.8.9
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 )
