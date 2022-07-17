@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"log"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -19,17 +20,23 @@ func NewRedis(rdb *redis.Client) *Redis {
 
 // Get 获取一个值
 func (r *Redis) Get(key string) (val interface{}) {
-	return
+	val, err := r.rdb.Get(key).Result()
+	if err != redis.Nil {
+		return val
+	}
+	return nil
 }
 
 // Set 设置一个值
 func (r *Redis) Set(key string, val interface{}, timeout time.Duration) (err error) {
-	return
+	return r.rdb.Set(key, val, timeout).Err()
 }
 
 // IsExist 判断key是否存在
 func (r *Redis) IsExist(key string) bool {
-	return false
+	i, err := r.rdb.Exists(key).Result()
+	log.Println(i, err)
+	return i > 0
 }
 
 // Delete 删除
