@@ -9,20 +9,22 @@ import (
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111"
 )
 
+var Tencent *TencentConig
+
 //腾讯云服务
-type Tencent struct {
+type TencentConig struct {
 	Appid  string
 	Secret string
 }
 
-func NewTencent(appid, secret string) *Tencent {
-	return &Tencent{
+func InitTencent(appid, secret string) {
+	Tencent = &TencentConig{
 		Appid:  appid,
 		Secret: secret,
 	}
 }
 
-func (t *Tencent) SendSmS(phone, sign, tempid string, args []string) error {
+func (t *TencentConig) SendSmS(phone, sign, tempid string, args []string) error {
 	credential := common.NewCredential(t.Appid, t.Secret)
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "sms.tencentcloudapi.com"
