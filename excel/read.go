@@ -1,9 +1,12 @@
 package excel
 
 import (
+	"log"
+
 	"github.com/pbnjay/grate"
 	_ "github.com/pbnjay/grate/xls"
 	_ "github.com/pbnjay/grate/xlsx"
+	"github.com/xuri/excelize/v2"
 )
 
 func Read(filepath string, sheets_index int) (res [][]string, err error) {
@@ -26,4 +29,20 @@ func Read(filepath string, sheets_index int) (res [][]string, err error) {
 	}
 	wb.Close()
 	return temp, nil
+}
+
+func ReadExcel2(filepath string, sheets int) (res [][]string, err error) {
+	f, err := excelize.OpenFile("Book1.xlsx")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer func() {
+		// Close the spreadsheet.
+		if err := f.Close(); err != nil {
+			log.Println(err)
+		}
+	}()
+	res, err = f.GetRows(f.GetSheetName(sheets))
+	return
 }
