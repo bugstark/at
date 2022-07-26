@@ -32,13 +32,12 @@ func Read(filepath string, sheets_index int) (res [][]string, err error) {
 }
 
 func ReadExcel2(filepath string, sheets int) (res [][]string, err error) {
-	f, err := excelize.OpenFile("Book1.xlsx")
+	f, err := excelize.OpenFile(filepath)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer func() {
-		// Close the spreadsheet.
 		if err := f.Close(); err != nil {
 			log.Println(err)
 		}
