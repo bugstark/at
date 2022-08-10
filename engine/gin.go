@@ -16,7 +16,11 @@ func NewEngine(debug bool) *gin.Engine {
 	}
 	var app = gin.New()
 	var safe validator.Func = func(fl validator.FieldLevel) bool {
-		pass, err := regexp.MatchString("^[A-Za-z0-9,.]+$", fl.Field().String())
+		var st = fl.Field().String()
+		if st == "" {
+			return true
+		}
+		pass, err := regexp.MatchString("^[A-Za-z0-9,.]+$", st)
 		if err != nil {
 			log.Println("Safe Check:", err.Error())
 			return false
