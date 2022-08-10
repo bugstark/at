@@ -22,15 +22,15 @@ func InitRedis(host, pass string, port, db int) {
 
 // Query 查询参数
 type Query struct {
-	Fields string `gorm:"-" form:"fields" json:"-"`
-	Sort   string `gorm:"-" form:"sort" json:"-"`
-	Order  string `gorm:"-" form:"order" json:"-"`
+	Fields string `gorm:"-" form:"fields" json:"-" binding:"safe"`
+	Sort   string `gorm:"-" form:"sort" json:"-" binding:"safe"`
+	Order  string `gorm:"-" form:"order" json:"-" binding:"safe"`
 	Size   int    `gorm:"-" form:"size" json:"-"`
 	Page   int    `gorm:"-" form:"page" json:"-"`
 }
 
 type Model struct {
-	ID        string         `gorm:"PRIMARY_KEY;UNIQUE;type:varchar(20);column:id;comment:'唯一ID'" json:"id,omitempty" form:"id"`
+	ID        string         `gorm:"PRIMARY_KEY;UNIQUE;type:varchar(20);column:id;comment:'唯一ID'" json:"id,omitempty" form:"id" binding:"safe,max=20"`
 	CreatedAt int64          `gorm:"type:int(10);column:createdat;comment:'创建时间'" json:"createdat,omitempty" form:"createdat"`
 	UpdatedAt int64          `gorm:"type:int(10);column:updatedat;comment:'更新时间'" json:"updatedat,omitempty" form:"updatedat"`
 	DeletedAt gorm.DeletedAt `gorm:"index;comment:'删除时间';column:deletedat" json:"deletedat,omitempty" form:"deletedat"`

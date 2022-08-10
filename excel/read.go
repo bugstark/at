@@ -9,7 +9,7 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-// 在win下使用疑似有问题，暂未排查
+// 修复导入读取问题
 func Read(filepath string, sheets_index int) (res [][]string, err error) {
 	wb, err := grate.Open(filepath)
 	if err != nil {
