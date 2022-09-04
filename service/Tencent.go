@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
@@ -24,12 +25,17 @@ func InitTencent(appid, secret string) {
 	}
 }
 
+// Phone 逗号分隔，最多200个
 func (t *TencentConig) SendSmS(phone, sign, tempid string, args []string) error {
 	credential := common.NewCredential(t.Appid, t.Secret)
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "sms.tencentcloudapi.com"
 	client, _ := sms.NewClient(credential, "ap-guangzhou", cpf)
 	request := sms.NewSendSmsRequest()
+	phonelist := strings.Split(phone, ",")
+	if len(phonelist) > 200 {
+		return errors.NewTencentCloudSDKError("0", "超出200个手机号", "0000-0000-0000")
+	}
 	request.PhoneNumberSet = common.StringPtrs([]string{phone})
 	request.SmsSdkAppId = common.StringPtr("1400616420") //默认
 	request.SignName = common.StringPtr(sign)
