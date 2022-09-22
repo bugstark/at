@@ -36,7 +36,7 @@ func (t *TencentConig) SendSmS(phone, sign, tempid string, args []string) error 
 	if len(phonelist) > 200 {
 		return errors.NewTencentCloudSDKError("0", "超出200个手机号", "0000-0000-0000")
 	}
-	request.PhoneNumberSet = common.StringPtrs([]string{phone})
+	request.PhoneNumberSet = common.StringPtrs(phonelist)
 	request.SmsSdkAppId = common.StringPtr("1400616420") //默认
 	request.SignName = common.StringPtr(sign)
 	request.TemplateId = common.StringPtr(tempid)
