@@ -48,7 +48,7 @@ func initmysql(dsn string, debug bool) *gorm.DB {
 	if err != nil {
 		log.Panicln("初始化数据库失败:" + err.Error())
 	}
-	under.SetConnMaxLifetime(time.Hour * 7)
+	under.SetConnMaxLifetime(time.Second * 3000)
 	under.SetMaxIdleConns(2)
 	under.SetMaxOpenConns(30)
 	err = initdb.Callback().Create().Before("gorm:create").Register("ID", func(db *gorm.DB) {
