@@ -14,7 +14,10 @@ const maxCharCount = 26
 // rows 数据切片，是一个二维数组
 func ExportExcel(sheetName string, headers []string, rows [][]string) (*excelize.File, error) {
 	f := excelize.NewFile()
-	sheetIndex := f.NewSheet(sheetName)
+	sheetIndex, err := f.NewSheet(sheetName)
+	if err != nil {
+		return nil, err
+	}
 	maxColumnRowNameLen := 1 + len(strconv.Itoa(len(rows)))
 	columnCount := len(headers)
 	if columnCount > maxCharCount {
