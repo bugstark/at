@@ -6,6 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/slices"
 )
 
 // Claims Jwt参数
@@ -22,8 +23,12 @@ type Config struct {
 }
 
 // Jwt 中间件
-func Jwt(key string) gin.HandlerFunc {
+func Jwt(key string, whitelist []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if slices.Contains(whitelist, c.Request.URL.RequestURI()) {
+			c.Next()
+			return
+		}
 		Authorization := c.GetHeader("Authorization")
 		l := len("Bearer")
 		if len(Authorization) > l+1 && Authorization[:l] == "Bearer" {
@@ -86,8 +91,8 @@ func (c *Config) GenerateToken(uid, openid, AuthID, UserName string) (string, er
 		AuthID,
 		UserName,
 		jwt.StandardClaims{
-			NotBefore: time.Now().Unix() - 60*60,                  //允许误差一小时
-			ExpiresAt: time.Now().Add(30 * 24 * time.Hour).Unix(), //30天自动过期
+			NotBefore: time.Now().Unix() - 60*60,                 //允许误差一小时
+			ExpiresAt: time.Now().Add(7 * 24 * time.Hour).Unix(), //30天自动过期
 			Issuer:    "BugStark",
 		},
 	}

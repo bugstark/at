@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/rs/xid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -51,12 +50,12 @@ func initmysql(dsn string, debug bool) *gorm.DB {
 	under.SetConnMaxLifetime(time.Second * 3000)
 	under.SetMaxIdleConns(2)
 	under.SetMaxOpenConns(30)
-	err = initdb.Callback().Create().Before("gorm:create").Register("ID", func(db *gorm.DB) {
-		if db.Statement.Table == "Sys_Auth" {
-			return
-		}
-		db.Statement.SetColumn("ID", xid.New().String())
-	})
+	// err = initdb.Callback().Create().Before("gorm:create").Register("ID", func(db *gorm.DB) {
+	// 	if db.Statement.Table == "Sys_Auth" {
+	// 		return
+	// 	}
+	// 	db.Statement.SetColumn("ID", xid.New().String())
+	// })
 	if err != nil {
 		log.Fatal("creat callback err", err)
 	}

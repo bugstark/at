@@ -35,7 +35,7 @@ func Str2Int(str string) int {
 	return i
 }
 
-//TrimSpace 去除结构体空格
+// TrimSpace 去除结构体空格
 func TrimSpace(target interface{}) {
 	t := reflect.TypeOf(target)
 	if t.Kind() != reflect.Ptr {
@@ -103,4 +103,26 @@ func AnyToStr(value interface{}) string {
 	}
 
 	return key
+}
+
+func StructToJson(v interface{}) string {
+	data, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(data)
+}
+
+func StructToJsonFormatted(v interface{}) string {
+	data, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	return string(data)
+}
+
+func JsonToStruct(data string, v interface{}) error {
+	return json.Unmarshal([]byte(data), v)
 }
