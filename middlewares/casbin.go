@@ -8,13 +8,13 @@ import (
 
 func Casbin(e *casbin.Enforcer, whitelist []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		obj := c.Request.URL.RequestURI()
-		if slices.Contains(whitelist, obj) {
+		if slices.Contains(whitelist, c.Request.URL.Path) {
 			c.Next()
 			return
 		}
+		obj := c.Request.URL.RequestURI()
 		act := c.Request.Method
-		sub := c.GetString("AuthID")
+		sub := c.GetString("RoleKey")
 		pass, err := e.Enforce(sub, obj, act)
 		if err != nil {
 			c.AbortWithStatusJSON(403, gin.H{"data": nil, "msg": err.Error()})

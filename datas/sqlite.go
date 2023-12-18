@@ -5,8 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/rs/xid"
-	"gorm.io/driver/sqlite"
+	// "github.com/rs/xid"
+
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -31,14 +32,14 @@ func initsqlite(debug bool) *gorm.DB {
 		log.Panicln(err)
 		return nil
 	}
-	err = initdb.Callback().Create().Before("gorm:create").Register("ID", func(db *gorm.DB) {
-		if db.Statement.Table == "Sys_Auth" {
-			return
-		}
-		db.Statement.SetColumn("ID", xid.New().String())
-	})
-	if err != nil {
-		log.Fatal("creat callback err", err)
-	}
+	// err = initdb.Callback().Create().Before("gorm:create").Register("ID", func(db *gorm.DB) {
+	// 	if db.Statement.Table == "Sys_Auth" {
+	// 		return
+	// 	}
+	// 	db.Statement.SetColumn("ID", xid.New().String())
+	// })
+	// if err != nil {
+	// 	log.Fatal("creat callback err", err)
+	// }
 	return initdb
 }

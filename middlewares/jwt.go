@@ -11,10 +11,12 @@ import (
 
 // Claims Jwt参数
 type Claims struct {
-	UID      string //可以是用户id，可以是管理员id
+	UID      uint   //可以是用户id，可以是管理员id
 	OpenId   string //关联的openid
-	AuthID   string //角色id
+	RoleKey  string //角色id
 	UserName string //用户名
+	DeptId   uint   //部门id
+	Isadmin  bool   //是否是管理员
 	jwt.StandardClaims
 }
 
@@ -25,7 +27,7 @@ type Config struct {
 // Jwt 中间件
 func Jwt(key string, whitelist []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if slices.Contains(whitelist, c.Request.URL.RequestURI()) {
+		if slices.Contains(whitelist, c.Request.URL.Path) {
 			c.Next()
 			return
 		}
@@ -50,9 +52,11 @@ func Jwt(key string, whitelist []string) gin.HandlerFunc {
 			return
 		}
 		c.Set("UID", data.UID)
-		c.Set("AuthID", data.AuthID)
+		c.Set("RoleKey", data.RoleKey)
 		c.Set("OpenId", data.OpenId)
 		c.Set("UserName", data.UserName)
+		c.Set("DeptId", data.DeptId)
+		c.Set("Isadmin", data.Isadmin)
 		c.Next()
 	}
 }
@@ -84,15 +88,17 @@ func (c *Config) ParseToken(token string) (*Claims, error) {
 }
 
 // GenerateToken 生成JWT
-func (c *Config) GenerateToken(uid, openid, AuthID, UserName string) (string, error) {
+func (c *Config) GenerateToken(uid uint, DeptId uint, openid, rolekey, username string, isadmin bool) (string, error) {
 	claims := Claims{
 		uid,
 		openid,
-		AuthID,
-		UserName,
+		rolekey,
+		username,
+		DeptId,
+		isadmin,
 		jwt.StandardClaims{
 			NotBefore: time.Now().Unix() - 60*60,                 //允许误差一小时
-			ExpiresAt: time.Now().Add(7 * 24 * time.Hour).Unix(), //30天自动过期
+			ExpiresAt: time.Now().Add(7 * 24 * time.Hour).Unix(), //7天自动过期
 			Issuer:    "BugStark",
 		},
 	}

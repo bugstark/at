@@ -26,7 +26,7 @@ e = some(where (p.eft == allow))
 g = _, _
 
 [matchers]
-m = (g(r.role, p.role) || r.role=="root") && (keyMatch2(r.urlpath, p.urlpath) || keyMatch(r.urlpath, p.urlpath) || p.urlpath == "*") && (r.method == p.method || p.method == "*" || regexMatch(r.method, p.method)) 
+m = (g(r.role, p.role) || r.role=="root") && (keyMatch2(r.urlpath, p.urlpath) || keyMatch(r.urlpath, p.urlpath) ||regexMatch(r.urlpath, p.urlpath) || p.urlpath == "*") && (r.method == p.method || p.method == "*" || regexMatch(r.method, p.method)) 
 `
 
 func Init(db *gorm.DB) error {

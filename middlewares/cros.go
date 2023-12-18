@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
-		c.Header("Access-Control-Allow-Origin", "*."+c.Request.Host)
+		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Headers", "*")
 		c.Header("Access-Control-Allow-Methods", "*")
 		c.Header("Access-Control-Expose-Headers", "*")
