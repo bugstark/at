@@ -6,8 +6,8 @@ import (
 	"time"
 
 	// "github.com/rs/xid"
-
-	"github.com/glebarez/sqlite"
+	"gorm.io/driver/sqlite"
+	// "github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )

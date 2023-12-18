@@ -8,6 +8,12 @@ import (
 
 const maxCharCount = 26
 
+type SheetData struct {
+	SheetName string
+	Headers   []string
+	Rows      [][]string
+}
+
 // ExportExcel 导出Excel文件
 // sheetName 工作表名称, 注意这里不要取sheet1这种名字,否则导致文件打开时发生部分错误。
 // headers 列名切片， 表头
@@ -68,11 +74,55 @@ func getColumnName(column, maxColumnRowNameLen int) []byte {
 
 // getColumnRowName 生成名称框
 // Excel的名称框是用A1,A2,B1,B2来表示的，这里需要传入前一步生成的列名切片，然后直接加上行索引来生成名称框，就无需每次分配内存
+// func getColumnRowName(columnName []byte, rowIndex int) (columnRowName string) {
+// 	l := len(columnName)
+// 	columnName = strconv.AppendInt(columnName, int64(rowIndex), 10)
+// 	columnRowName = string(columnName)
+// 	// 将列名恢复回去
+// 	columnName = columnName[:l]
+// 	return
+// }
+
 func getColumnRowName(columnName []byte, rowIndex int) (columnRowName string) {
-	l := len(columnName)
-	columnName = strconv.AppendInt(columnName, int64(rowIndex), 10)
-	columnRowName = string(columnName)
-	// 将列名恢复回去
-	columnName = columnName[:l]
+	columnRowName = string(append(columnName, strconv.Itoa(rowIndex)...))
 	return
+}
+
+func ExportExcelBatchSheet(sheetData []SheetData) (*excelize.File, error) {
+	f := excelize.NewFile()
+	for _, data := range sheetData {
+		sheetIndex, err := f.NewSheet(data.SheetName)
+		if err != nil {
+			return nil, err
+		}
+		maxColumnRowNameLen := 1 + len(strconv.Itoa(len(data.Rows)))
+		columnCount := len(data.Headers)
+		if columnCount > maxCharCount {
+			maxColumnRowNameLen++
+		} else if columnCount > maxCharCount*maxCharCount {
+			maxColumnRowNameLen += 2
+		}
+		columnNames := make([][]byte, 0, columnCount)
+		for i, header := range data.Headers {
+			columnName := getColumnName(i, maxColumnRowNameLen)
+			columnNames = append(columnNames, columnName)
+			// 初始化excel表头，这里的index从1开始要注意
+			curColumnName := getColumnRowName(columnName, 1)
+			err := f.SetCellValue(data.SheetName, curColumnName, header)
+			if err != nil {
+				return nil, err
+			}
+			for rowIndex, row := range data.Rows {
+				for columnIndex, columnName := range columnNames {
+					// 从第二行开始
+					err := f.SetCellValue(data.SheetName, getColumnRowName(columnName, rowIndex+2), row[columnIndex])
+					if err != nil {
+						return nil, err
+					}
+				}
+			}
+			f.SetActiveSheet(sheetIndex)
+		}
+	}
+	return f, nil
 }
