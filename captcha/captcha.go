@@ -21,7 +21,7 @@ var driver base64Captcha.Driver = base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 
 // 生成验证码
 func Generate() (id, b64s string, err error) {
 	c := base64Captcha.NewCaptcha(driver, store)
-	id, b64s, err = c.Generate()
+	id, b64s, _, err = c.Generate()
 	return
 }
 
